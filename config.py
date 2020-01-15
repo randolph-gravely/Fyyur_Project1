@@ -9,5 +9,7 @@ DEBUG = True
 # Connect to the database
 
 
-# TODO IMPLEMENT DATABASE URL
+
+# TODO IMPLEMENT DATABASE URL DONE
+
 SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://rando@localhost/fyyurapp'
