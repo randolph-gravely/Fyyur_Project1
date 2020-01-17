@@ -70,9 +70,6 @@ class Artist(db.Model):
     seeking_venue = db.Column(db.Boolean)
 
 
-
-
-
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
 # TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
@@ -107,7 +104,9 @@ def index():
 def venues():
   # TODO: replace with real venues data.
   #       num_shows should be aggregated based on number of upcoming shows per venue.
-  data=[{
+  data = Venue.query.all()
+
+  test_data =[{
     "city": "San Francisco",
     "state": "CA",
     "venues": [{
@@ -226,7 +225,6 @@ def show_venue(venue_id):
     "past_shows_count": 1,
     "upcoming_shows_count": 1,
   }
-  data = list(filter(lambda d: d['id'] == venue_id, [data1, data2, data3]))[0]
   return render_template('pages/show_venue.html', venue=data)
 
 #  Create Venue
@@ -263,7 +261,9 @@ def delete_venue(venue_id):
 @app.route('/artists')
 def artists():
   # TODO: replace with real data returned from querying the database
-  data=[{
+  data= Artist.query.all()
+
+  test_data=[{
     "id": 4,
     "name": "Guns N Petals",
   }, {
