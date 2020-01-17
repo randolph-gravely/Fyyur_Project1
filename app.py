@@ -48,6 +48,7 @@ class Venue(db.Model):
     website = db.Column(db.String(120))
     facebook_link = db.Column(db.String(120))
     seeking_talent = db.Column(db.Boolean)
+    seeking_description = db.Column(db.String(120))
     artists = db.relationship('Artist', secondary=shows,
         backref=db.backref('venues', lazy=True))
 
@@ -65,6 +66,7 @@ class Artist(db.Model):
     phone = db.Column(db.String(120))
     genres = db.Column(db.String(120))
     website = db.Column(db.String(120))
+    seeking_description = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
     seeking_venue = db.Column(db.Boolean)
@@ -104,9 +106,7 @@ def index():
 def venues():
   # TODO: replace with real venues data.
   #       num_shows should be aggregated based on number of upcoming shows per venue.
-  data = Venue.query.group_by('city','state','id').all()
-
-  test_data =[{
+  data =[{
     "city": "San Francisco",
     "state": "CA",
     "venues": [{
@@ -147,8 +147,12 @@ def search_venues():
 @app.route('/venues/<int:venue_id>')
 def show_venue(venue_id):
   # shows the venue page with the given venue_id
-  # TODO: replace with real venue data from the venues table, using venue_id
-  data={
+  # Partially done- TODO: replace with real venue data from the venues table, using venue_id
+
+  data=Venue.query.filter_by(id=venue_id).first()
+
+
+  test_data={
     "id": 1,
     "name": "The Musical Hop",
     "genres": ["Jazz", "Reggae", "Swing", "Classical", "Folk"],
@@ -260,19 +264,10 @@ def delete_venue(venue_id):
 #  ----------------------------------------------------------------
 @app.route('/artists')
 def artists():
-  # DONE TODO: replace with real data returned from querying the database
+  # TODO: replace with real data returned from querying the database
   data= Artist.query.all()
 
-  test_data=[{
-    "id": 4,
-    "name": "Guns N Petals",
-  }, {
-    "id": 5,
-    "name": "Matt Quevedo",
-  }, {
-    "id": 6,
-    "name": "The Wild Sax Band",
-  }]
+
   return render_template('pages/artists.html', artists=data)
 
 @app.route('/artists/search', methods=['POST'])
@@ -451,9 +446,7 @@ def shows():
   # displays list of shows at /shows
   # TODO: replace with real venues data.
   #       num_shows should be aggregated based on number of upcoming shows per venue.
-  data= Shows.query.all()
-
-  test_data=[{
+  data=[{
     "venue_id": 1,
     "venue_name": "The Musical Hop",
     "artist_id": 4,
