@@ -104,7 +104,7 @@ def index():
 def venues():
   # TODO: replace with real venues data.
   #       num_shows should be aggregated based on number of upcoming shows per venue.
-  data = Venue.query.all()
+  data = Venue.query.group_by('city','state','id').all()
 
   test_data =[{
     "city": "San Francisco",
@@ -451,7 +451,9 @@ def shows():
   # displays list of shows at /shows
   # TODO: replace with real venues data.
   #       num_shows should be aggregated based on number of upcoming shows per venue.
-  data=[{
+  data= Shows.query.all()
+
+  test_data=[{
     "venue_id": 1,
     "venue_name": "The Musical Hop",
     "artist_id": 4,
