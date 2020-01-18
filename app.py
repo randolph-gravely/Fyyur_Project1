@@ -28,11 +28,7 @@ db = SQLAlchemy(app)
 # Models.
 #----------------------------------------------------------------------------#
 
-shows = db.Table('Shows',
-    db.Column('venue_id', db.Integer, db.ForeignKey('Venue.id'), primary_key=True),
-    db.Column('artist_id', db.Integer, db.ForeignKey('Artist.id'), primary_key=True),
-    db.Column('start_time',db.DateTime(timezone=False), primary_key=True)
-)
+
 
 class Venue(db.Model):
     __tablename__ = 'Venue'
@@ -49,8 +45,6 @@ class Venue(db.Model):
     facebook_link = db.Column(db.String(120))
     seeking_talent = db.Column(db.Boolean)
     seeking_description = db.Column(db.String(120))
-    artists = db.relationship('Artist', secondary=shows,
-        backref=db.backref('venues', lazy=True))
 
     # DONE TODO: implement any missing fields, as a database migration using Flask-Migrate
 
@@ -70,7 +64,7 @@ class Artist(db.Model):
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
     seeking_venue = db.Column(db.Boolean)
-
+    seeking_description = db.Column(db.String(120))
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
