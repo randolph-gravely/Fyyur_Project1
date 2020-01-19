@@ -6,6 +6,7 @@ import json
 import dateutil.parser
 import babel
 from flask import Flask, render_template, request, Response, flash, redirect, url_for
+from sqlalchemy.dialects import postgresql
 from flask_migrate import Migrate
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
@@ -43,10 +44,10 @@ class Venue(db.Model):
     city = db.Column(db.String(120))
     state = db.Column(db.String(120))
     address = db.Column(db.String(120))
-    genres = db.Column(db.String(120))
     phone = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     website = db.Column(db.String(120))
+    genres = db.Column(db.ARRAY(db.String))
     facebook_link = db.Column(db.String(120))
     seeking_talent = db.Column(db.Boolean)
     seeking_description = db.Column(db.String(120))
@@ -64,10 +65,9 @@ class Artist(db.Model):
     city = db.Column(db.String(120))
     state = db.Column(db.String(120))
     phone = db.Column(db.String(120))
-    genres = db.Column(db.String(120))
     website = db.Column(db.String(120))
-    seeking_description = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
+    genres = db.Column(db.ARRAY(db.String))
     facebook_link = db.Column(db.String(120))
     seeking_venue = db.Column(db.Boolean)
     seeking_description = db.Column(db.String(120))
@@ -250,7 +250,7 @@ def create_venue_submission():
       state = request.form.get('state', '')
       phone = request.form.get('phone', '')
       address = request.form.get('address', '')
-      genres = request.form.get('generes', '')
+      genres = request.form.getlist('genres')
       facebook_link = request.form.get('facebook_link', '')
       venue = Venue(name=name,
           city=city,
@@ -264,7 +264,7 @@ def create_venue_submission():
       db.session.commit()
       flash('Venue ' + request.form['name'] + ' was successfully listed!')
   except:
-    flash('An error occured. Venue ' + request.form['name'] + 'has not been listed.')
+    flash('An error occured. Venue "' + request.form['name'] + '" has not been listed.')
     error = True
     db.session.rollback()
   finally:
@@ -456,8 +456,8 @@ def create_artist_submission():
          city = request.form.get('city', '')
          state = request.form.get('state', '')
          phone = request.form.get('phone', '')
-         address = request.form.get('address', '')
-         genres = request.form.get('generes', '')
+         address = request.form.get('address')
+         genres = request.form.getlist('genres')
          facebook_link = request.form.get('facebook_link', '')
          artist = Artist(name=name,
              city=city,
