@@ -503,7 +503,18 @@ def shows():
   # displays list of shows at /shows
   # TODO: replace with real venues data.
   #       num_shows should be aggregated based on number of upcoming shows per venue.
-  data = Show.query.all()
+  data =[]
+  query = Show.query.order_by('start_time').all()
+  for show in query:
+      dict = {
+        "venue_id" : show.venue_id,
+        "artist_id" : show.artist_id,
+        "venue_name" : Venue.query.filter_by(id=show.venue_id).first().name,
+        "artist_name" : Artist.query.filter_by(id=show.artist_id).first().name,
+        "artist_image_link" : Artist.query.filter_by(id=show.artist_id).first().image_link,
+        "start_time" : show.start_time
+        }
+      data.append(dict)
   test_data=[{
     "venue_id": 1,
     "venue_name": "The Musical Hop",
