@@ -135,9 +135,11 @@ def search_venues():
   # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
   # seach for Hop should return "The Musical Hop".
   # search for "Music" should return "The Musical Hop" and "Park Square Live Music & Coffee"
-  search_query = response.form.get()
-  #response = Venue.query.filter_by(Venue.name.ilike(%%))
-  response={
+  search_query = request.form.get('search_term')
+  response = {"count" : Venue.query.filter(Venue.name.ilike(f'%{search_query}%')).count(),
+      'data' : Venue.query.filter(Venue.name.ilike(f'%{search_query}%')).all()
+      }
+  test_response={
     "count": 1,
     "data": [{
       "id": 2,
@@ -301,7 +303,11 @@ def search_artists():
   # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
   # seach for "A" should return "Guns N Petals", "Matt Quevado", and "The Wild Sax Band".
   # search for "band" should return "The Wild Sax Band".
-  response={
+  search_query = request.form.get('search_term')
+  response = {"count" : Artist.query.filter(Artist.name.ilike(f'%{search_query}%')).count(),
+        'data' : Artist.query.filter(Artist.name.ilike(f'%{search_query}%')).all()
+        }
+  test_response={
     "count": 1,
     "data": [{
       "id": 4,
