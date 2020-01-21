@@ -154,8 +154,52 @@ def search_venues():
 def show_venue(venue_id):
   # shows the venue page with the given venue_id
   # Partially done- TODO: replace with real venue data from the venues table, using venue_id
+  show_query = Show.query.filter_by(venue_id=venue_id).all()
+  past_shows_count = 0
+  past_shows = []
+  upcoming_shows_count = 0
+  upcoming_shows = []
+  now = datetime.now()
+  for show in show_query:
+      if datetime.strptime(show.start_time, '%Y-%m-%d %H:%M:%S')  < now:
+          past_shows_count += 1
+          past_shows.append({
+            "artist_id" : show.artist_id,
+            "artist_name" : Artist.query.filter_by(id=show.artist_id).first().name,
+            "artist_image_link" : Artist.query.filter_by(id=show.artist_id).first().image_link,
+            "start_time": show.start_time
+            })
+      else:
+            upcoming_shows_count += 1
+            upcoming_shows.append({
+              "artist_id" : show.artist_id,
+              "artist_name" : Artist.query.filter_by(id=show.artist_id).first().name,
+              "artist_image_link" : Artist.query.filter_by(id=show.artist_id).first().image_link,
+              "start_time": show.start_time
+              })
 
-  data=Venue.query.filter_by(id=venue_id).first()
+  query = Venue.query.filter_by(id=venue_id).first()
+  data = {
+    "id" : query.id,
+    "name" : query.name,
+    "genres": query.genres,
+    "city" : query.city,
+    "address": query.address,
+    "facebook_link" : query.facebook_link,
+    "state" : query.state,
+    "phone" : query.phone,
+    "website": query.website,
+    "seeking_talent" : query.seeking_talent,
+    "seeking_description" : query.seeking_description,
+    "image_link" : query.image_link,
+    "past_shows" : past_shows,
+    "past_shows_count" : past_shows_count,
+    "upcoming_shows" : upcoming_shows,
+    "upcoming_shows_count" : upcoming_shows_count
+    }
+
+
+  #data=Venue.query.filter_by(id=venue_id).first()
 
 
   test_data={
@@ -354,6 +398,7 @@ def show_artist(artist_id):
     "city" : query.city,
     "state" : query.state,
     "phone" : query.phone,
+    "facebook_link" : query.facebook_link,
     "website": query.website,
     "seeking_venue" : query.seeking_venue,
     "seeking_description" : query.seeking_description,
