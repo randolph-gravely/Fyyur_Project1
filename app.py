@@ -6,6 +6,7 @@ import json
 from datetime import datetime
 import dateutil.parser
 import babel
+from sqlalchemy import func
 from flask import Flask, render_template, request, Response, flash, redirect, url_for
 from sqlalchemy.dialects import postgresql
 from flask_migrate import Migrate
@@ -108,7 +109,19 @@ def index():
 def venues():
   # TODO: replace with real venues data.
   #       num_shows should be aggregated based on number of upcoming shows per venue.
-  data =[{
+  query = Venue.query.all()
+  dict = []
+  for q in query:
+      area = {
+        "city" : q.city,
+        "state" : q.state,
+        "venues" : Venue.query.filter_by(city=q.city).filter_by(state=q.state).all()
+        }
+      if area not in dict:
+          dict.append(area)
+
+  data = dict
+  test_data =[{
     "city": "San Francisco",
     "state": "CA",
     "venues": [{
