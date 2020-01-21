@@ -3,6 +3,7 @@
 #----------------------------------------------------------------------------#
 
 import json
+from datetime import datetime
 import dateutil.parser
 import babel
 from flask import Flask, render_template, request, Response, flash, redirect, url_for
@@ -321,7 +322,47 @@ def search_artists():
 def show_artist(artist_id):
   # shows the venue page with the given venue_id
   # TODO: replace with real venue data from the venues table, using venue_id
-  data = Artist.query.filter_by(id=artist_id).first()
+  show_query = Show.query.filter_by(artist_id=artist_id).all()
+  past_shows_count = 0
+  past_shows = []
+  upcoming_shows_count = 0
+  upcoming_shows = []
+  now = datetime.now()
+  for show in show_query:
+      if datetime.strptime(show.start_time, '%Y-%m-%d %H:%M:%S')  < now:
+          past_shows_count += 1
+          past_shows.append({
+            "venue_id" : show.venue_id,
+            "venue_name" : Venue.query.filter_by(id=show.venue_id).first().name,
+            "venue_image_link" : Venue.query.filter_by(id=show.venue_id).first().image_link,
+            "start_time": show.start_time
+            })
+      else:
+            upcoming_shows_count += 1
+            upcoming_shows.append({
+              "venue_id" : show.venue_id,
+              "venue_name" : Venue.query.filter_by(id=show.venue_id).first().name,
+              "venue_image_link" : Venue.query.filter_by(id=show.venue_id).first().image_link,
+              "start_time": show.start_time
+              })
+
+  query = Artist.query.filter_by(id=artist_id).first()
+  data = {
+    "id" : query.id,
+    "name" : query.name,
+    "genres": query.genres,
+    "city" : query.city,
+    "state" : query.state,
+    "phone" : query.phone,
+    "website": query.website,
+    "seeking_venue" : query.seeking_venue,
+    "seeking_description" : query.seeking_description,
+    "image_link" : query.image_link,
+    "past_shows" : past_shows,
+    "past_shows_count" : past_shows_count,
+    "upcoming_shows" : upcoming_shows,
+    "upcoming_shows_count" : upcoming_shows_count
+    }
   data1={
     "id": 4,
     "name": "Guns N Petals",
